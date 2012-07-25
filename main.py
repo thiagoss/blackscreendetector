@@ -9,8 +9,9 @@ def callback(bus, message):
         if message.structure.get_name() == "GstVideoAnalyse" and message.structure['brightness'] < 0.07:
             print "black screen."
     elif message.type == gst.MESSAGE_ERROR:
-        print 'ERRO', message
-        sys.exit(1)
+        err, debug = message.parse_error()
+        print "Error: %s" % err, debug
+        loop.quit()
 
 pipeline = gst.parse_launch("autovideosrc ! ffmpegcolorspace ! queue ! videoanalyse name='analyse' ! ffmpegcolorspace ! autovideosink")
 bus = pipeline.get_bus()
