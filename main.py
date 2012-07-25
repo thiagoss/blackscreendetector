@@ -13,7 +13,7 @@ def callback(bus, message):
         print "Error: %s" % err, debug
         loop.quit()
 
-pipeline = gst.parse_launch("autovideosrc ! ffmpegcolorspace ! queue ! videoanalyse name='analyse' ! ffmpegcolorspace ! autovideosink")
+pipeline = gst.parse_launch("uridecodebin uri=%s ! videoanalyse name='analyse' ! ffmpegcolorspace ! autovideosink" % sys.argv[1])
 bus = pipeline.get_bus()
 bus.add_signal_watch()
 bus.connect("message", callback)
