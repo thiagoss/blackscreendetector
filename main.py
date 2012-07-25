@@ -1,8 +1,8 @@
 import sys
 sys.path.insert(0, "/Library/Frameworks/GStreamer.framework/Versions/0.10/x86_64/lib/python2.7/site-packages/gst-0.10")
-sys.path.insert(0, "/Library/Frameworks/GStreamer.framework/Versions/0.10/x86_64/lib/python2.7/site-packages/")
+sys.path.insert(0, "/Library/Frameworks/GStreamer.framework/Versions/0.10/x86_64/lib/python2.7/site-packages")
+import glib, gobject
 import gst
-import gtk
 
 def callback(bus, message):
     if message.type == gst.MESSAGE_ELEMENT:
@@ -13,13 +13,16 @@ def callback(bus, message):
         print 'ERRO', message
         sys.exit(1)
 
-pipeline = gst.parse_launch("videotestsrc ! videoanalyse name='analyse' ! ffmpegcolorspace ! autovideosink")
+pipeline = gst.parse_launch("videotestsrc ! ffmpegcolorspace ! queue ! videoanalyse name='analyse' ! ffmpegcolorspace ! autovideosink")
 bus = pipeline.get_bus()
 bus.add_signal_watch()
 bus.connect("message", callback)
 pipeline.set_state(gst.STATE_PLAYING)
 
-gtk.main()
+gobject.threads_init()
+loop = glib.MainLoop()
+loop.run()
+
 pipeline.set_state(gst.STATE_NULL)
 
 
