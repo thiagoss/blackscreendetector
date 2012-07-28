@@ -1,5 +1,8 @@
 import sys
 sys.path.insert(0, "/Library/Frameworks/GStreamer.framework/Versions/0.10/x86_64/lib/python2.7/site-packages/gst-0.10")
+sys.path.insert(0, "/Library/Frameworks/GStreamer.framework/Versions/0.10/x86_64/lib/python2.7/site-packages")
+import lib
+import glib, gobject
 import gst
 
 THRESHOLD = 0.07 #brigthness less than 0.07 implies black screen
