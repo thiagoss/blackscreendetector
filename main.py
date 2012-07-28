@@ -3,8 +3,8 @@ sys.path.insert(0, "/Library/Frameworks/GStreamer.framework/Versions/0.10/x86_64
 import lib
 import glib, gobject
 
-def callback():
-    print "black screen of death."
+def callback(stream):
+    print "black screen of death: " + stream
 
 def start_all():
     gobject.threads_init()
