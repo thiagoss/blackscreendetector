@@ -2,6 +2,8 @@ import sys
 sys.path.insert(0, "/Library/Frameworks/GStreamer.framework/Versions/0.10/x86_64/lib/python2.7/site-packages/gst-0.10")
 import gst
 
+THRESHOLD = 0.07 #brigthness less than 0.07 implies black screen
+
 class Detector(object):
     def __init__(self, rtmp_uri, callback):
         self.rtmp_uri = rtmp_uri
@@ -30,10 +32,8 @@ class Detector(object):
         self.bus.connect("message", self.internal_callback)
 
     def internal_callback(self, bus, message): #need tests
-        if message.type == gst.MESSAGE_ELEMENT and \
-            message.structure.get_name() == "GstVideoAnalyse" and \
-            message.structure["brightness"] < 0.07:
-                self.external_callback()
+        if self.is_blackscreen(message):
+            self.external_callback()
 
         elif message.type == gst.MESSAGE_ERROR:
             err, debug = message.parse_error()
@@ -41,4 +41,13 @@ class Detector(object):
 
     def connect_and_check_for_blackscreen(self):
         self.pipeline.set_state(gst.STATE_PLAYING)
+
+    def is_blackscreen(self, message):
+        if message.type == gst.MESSAGE_ELEMENT and \
+            message.structure.get_name() == "GstVideoAnalyse" and \
+            message.structure["brightness"] < THRESHOLD:
+
+            return True
+
+        return False
 
