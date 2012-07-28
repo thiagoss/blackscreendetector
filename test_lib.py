@@ -12,18 +12,18 @@ def test_detector_should_call_callback_if_blackscreen_appears(monkeypatch):
     monkeypatch.setattr(lib.Detector, 'connect_and_check_for_blackscreen',
                                        fake_connect_and_check_for_blackscreen)
     was_called = []
-    def callback():
-        was_called.append(True)
+    def callback(stream):
+        was_called.append(PROBLEMATIC_STREAM)
 
     detector = lib.Detector(PROBLEMATIC_STREAM, callback)
     detector.start()
 
-    assert was_called
+    assert was_called[0] == PROBLEMATIC_STREAM
 
 def test_detector_should_not_call_callback_if_no_blackscreen_appears():
     was_called = []
-    def callback():
-        was_called.append(True)
+    def callback(stream):
+        was_called.append(stream)
 
     detector = lib.Detector(GOOD_STREAM, callback)
     detector.start()
@@ -56,6 +56,6 @@ class FakeStructure(dict):
 
 def fake_connect_and_check_for_blackscreen(self, *args):
     if 'blackscreen' in self.rtmp_uri:
-        self.external_callback()
+        self.external_callback(self.rtmp_uri)
 
 

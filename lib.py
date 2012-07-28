@@ -36,7 +36,7 @@ class Detector(object):
 
     def internal_callback(self, bus, message): #need tests
         if self.is_blackscreen(message):
-            self.external_callback()
+            self.external_callback(self.rtmp_uri)
 
         elif message.type == gst.MESSAGE_ERROR:
             err, debug = message.parse_error()
